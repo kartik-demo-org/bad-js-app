@@ -583,6 +583,11 @@ restoreOverwrittenFilesWithOriginals().then(() => {
   /* Route for redirects */
   app.get('/redirect', redirect())
 
+  /* Intentionally vulnerable reflected XSS endpoint for SAST training */
+  app.get('/sast-training/greeting', (req: Request, res: Response) => {
+    res.send(`<h1>Hello, ${req.query.name ?? 'guest'}!</h1>`)
+  })
+
   /* Routes for promotion video page */
   app.get('/promotion', videoHandler.promotionVideo())
   app.get('/video', videoHandler.getVideo())
