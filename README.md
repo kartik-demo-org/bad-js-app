@@ -60,6 +60,25 @@ For a detailed introduction, full list of features and architecture overview ple
 - [Contributors](#contributors)
 - [Licensing](#licensing)
 
+## Unreachable SAST training example
+
+`lib/training/unreachableXss.js` deliberately contains an unescaped request-query-to-HTML
+sink (CWE-79) for comparison with reachable reflected XSS. It is not imported by the
+application or registered as an Express route. Even if called directly, its unconditional
+return sends only a fixed `410` plaintext response before the request source or HTML sink
+can execute. There is no environment variable or request parameter that enables the sink.
+Do not remove that return or wire this fixture into the application.
+
+Run `node test/training/unreachableXss.js` to check empty input, an HTML/script payload,
+and a throwing query getter. The checks assert the exact response calls and prove that
+the request source is not accessed on those executions. They are dependency-free and do
+not start the application; they are not a full application or browser test.
+
+A SAST analyzer may report the unsafe source-to-sink pattern, prune the dead code, or
+exclude the fixture depending on its rules, reachability analysis, and scan scope.
+This is intentionally unsafe syntax in dead code, not an exploitable runtime endpoint.
+No particular scanner finding is guaranteed by this fixture.
+
 ## Setup
 
 > You can find some less common installation variations in
